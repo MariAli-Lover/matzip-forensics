@@ -1,5 +1,6 @@
 class Item:
-
+    #버리는코드. 코딩하다보니 쓰기가애매해졌음
+    #파일하나 클래스임
     def __init__(self, name, path, size, md5, sha1, modify_time, access_time, create_time, index_num, folder) :
         self.name = name
         self.path = path
