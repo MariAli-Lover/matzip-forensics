@@ -1,7 +1,6 @@
 import os
 
 from file_hash import *
-from makeCSV import *
 from file_info import *
 import Item
 from dbManager import *
@@ -41,17 +40,26 @@ def makeDD(path) : #DD떨구기 1도모름
                 break
 
 def readDisk():
+    global default_path
     print("Please input path > ") # 최상위폴더 입력받기
     default_path = input() #입력받음
 
     item_dict = {}
     item_dict['name'] = "DEFAULT_PATH"
     item_dict['contents'] = default_path
-
     db1.updateDB("SETUP", item_dict) # 최상위폴더경로 (default_path) db에 저장
-
+    item_dict.clear()
+    item_dict['num'] = 0
+    item_dict['name'] = os.path.basename(default_path)
+    item_dict['path'] = os.path.dirname(default_path)[:-1] if os.path.dirname(default_path)[-1] == "\\" else os.path.dirname(default_path)# 경로끝에 \ 붙을 시 \ 떼줌
+    item_dict['upper_num'] = -1
+    item_dict['parsed'] = 1
+    db1.updateDB("FOLDER", item_dict) # 최상위폴더정보저장
+    addRootFolderNum(default_path, 0)
+    addRootFolderNum(item_dict['path'], -1)
     #directory = os.listdir(default_path)
-    get_file_path(default_path, db1) # 최상위폴더부터 파일폴더 쭉긁어옴
+    #get_file_path(default_path, db1) # 최상위폴더부터 파일폴더 쭉긁어옴
+    get_one_file_path(default_path, db1)
     """for items in directory:
         one_item = os.path.join(default_path, items)  # 디렉토리에있는 파일 및 폴더 읽어온다.
 
@@ -64,6 +72,8 @@ def readDisk():
                              , file_inform['index'])  # 새로운 Item객체 만듬, 정보대입
             itemList.append(item)  # itemList에 item객체를 넣는다
             #db1.updateDB("INSERT", file_inform)"""
+
+
 db1 = db(); #db 객체생성
 db1.createTableIfNotExist() #db 테이블 없으면 만들기
 print("DB 연결완료")
