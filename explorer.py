@@ -1,4 +1,5 @@
 from main import *
+from file_signature import *
 
 def beginExplorer() :
     location = 0
@@ -16,6 +17,11 @@ def beginExplorer() :
             for i in row_evidences :
                 print(i[0], end = " ") #NAME만 출력
             print("\n")
+
+        if cmd == "bd" :
+            row_folder, row_evidences = main.db1.getItemList(location)
+            for i in row_evidences :
+                is_bad_signature(main.default_path + "\\" + i[0])
 
         if cmd[:2] == "cd" : # 앞 두글자가 cd이면
             dir_name = cmd.split(" ", 1)[1] #앞에 공백하나 기준으로 앞뒤쪼깨서 뒤에것 dir_name에넣음
