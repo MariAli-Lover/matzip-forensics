@@ -24,7 +24,7 @@ def is_bad_signature(file_name_list):
 
     flag_header_matched = 0
 
-    conn = sqlite3.connect("./db/file_signature22.db")# 파일 시그니처 들어가있는 DB
+    conn = sqlite3.connect("./file_signature.db")# 파일 시그니처 들어가있는 DB
     cur = conn.cursor()
     extension = os.path.splitext(file_name_list)[1].replace(".", "")#확장자 파싱
     pass_footer_key = 0
