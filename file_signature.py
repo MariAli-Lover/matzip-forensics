@@ -36,10 +36,9 @@ def is_bad_signature(file_name_list):
     sql = "select header_signature , footer_signature , header_offset , footer_offset from file_signature where extension= :Extension"
     cur.execute(sql, {'Extension' : extension})
     db_row = cur.fetchall()
-    print(db_row, len(db_row))
 
     if not db_row: #db에서 확장자를 확인 할수 없는 경우
-        print("unknown extension")
+        print("unknown extension : " + file_name_list)
         return "unknown extension" #메인쪽에 기능을 어떻게 할지 정하면 됨
 
     f = open(file_name_list, "rb")
@@ -63,13 +62,6 @@ def is_bad_signature(file_name_list):
             footer_offset_len = 0
 
         i = 0
-        varii = hex(struct.unpack_from(">B", sp, 0x0 + 0)[0])
-
-        print(varii , type(varii) , varii[0:1] , varii[1:2] , varii[2:3] , hlist[0][1])
-
-        print(hex(struct.unpack_from(">B", sp, 0x0 + i)[0]))
-        print(re.match("0x"+hlist[0], hex(struct.unpack_from(">B", sp, 0x0 + 0)[0])))
-
 
         while re.match('0x'+hlist[i], format(struct.unpack_from(">B", sp, 0x0 + i)[0],'#04x')):
             i += 1
@@ -114,10 +106,3 @@ def is_bad_signature(file_name_list):
 
     print("header signature not matched")
     return "header not matched" #메인쪽에 기능을 어떻게 할지 정하면 됨
-
-#####!!!TEST!!!#####
-file_name_list = ['C:/Users/조재민/Desktop/출결/출결통합_9_19.xlsx']
-a = datetime.datetime.now()
-is_bad_signature(file_name_list[0]) # 0.015630 초 소요
-c = datetime.datetime.now() - a
-print(c.seconds , c.microseconds , c)
