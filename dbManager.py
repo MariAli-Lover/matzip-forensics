@@ -1,6 +1,7 @@
 import main
 import Item
 import sqlite3
+from get_file_path import *
 
 
 class db :
@@ -34,7 +35,7 @@ class db :
             # MD5 길이
             # SHA1 길이
             self.sql = "CREATE TABLE folder(" \
-                       " NUM NUMBER(10), NAME    CHAR(255), PATH CHAR(255), UPPER_NUM NUMBER(10))"
+                       " NUM NUMBER(10), NAME    CHAR(255), PATH CHAR(255), UPPER_NUM NUMBER(10), PARSED NUMBER(1))"
             self.cur.execute(self.sql)
             self.created = False #DB가 처음만들어졌다 (후에 if문에 사용)
 
@@ -67,6 +68,13 @@ class db :
                 main.default_path = load_path[1]
             else :
                 print("DEFAULT_PATH 읽는 도중 에러 발생")
+
+            self.sql = "SELECT * FROM FOLDER" # folder_num_dict 불러오기
+            self.cur.execute(self.sql)
+            self.conn.commit()
+            self.row = self.cur.fetchall()
+            for i in self.row :
+                addRootFolderNum(i[2] + "\\" + i[1], i[0])
         else :
             main.readDisk()
 
@@ -84,10 +92,16 @@ class db :
 
         #folder
         if opcode == "FOLDER" :
-            self.sql = "INSERT INTO FOLDER (NUM, NAME, PATH, UPPER_NUM) VALUES (:num, :name, :path, :upper_num)"
+            self.sql = "INSERT INTO FOLDER (NUM, NAME, PATH, UPPER_NUM, PARSED) VALUES (:num, :name, :path, :upper_num, :parsed)"
             main.printDebugMessage("sql : " + self.sql)
             self.cur.execute(self.sql, item_dict)
             self.conn.commit() # 트랜잭션 처리
+
+        if opcode == "FOLDER_PARSED" :
+            self.sql = "UPDATE FOLDER SET PARSED = 1 WHERE NAME is :name AND PATH is :path"
+            main.printDebugMessage("sql : " + self.sql)
+            self.cur.execute(self.sql, item_dict)
+            self.conn.commit()  # 트랜잭션 처리
 
         if opcode == "SETUP" :
             self.sql = "INSERT INTO SETUP(NAME, CONTENTS) VALUES (:name, :contents)"
@@ -130,6 +144,5 @@ class db :
         except :
             print("DB에러 발생2")
             self.row = None
-
         return self.row
 #evidenceList = ["name", "path", "size", "md5", "sha1", "modify_time", "access_time", "create_time", "index"]
