@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="UI_resource_Add_to_Bookmark">
+    <file>documents-document-add.png</file>
+    <file>controls-editor-trash.png</file>
+  </qresource>
+</RCC>

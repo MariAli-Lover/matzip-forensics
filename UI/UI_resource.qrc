@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="UI_resource">
+    <file>documents-folder@32px.png</file>
+    <file>bookmarks-bookmark-add.png</file>
+    <file>documents-document-blank@32px.png</file>
+  </qresource>
+</RCC>
