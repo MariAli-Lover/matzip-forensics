@@ -1,6 +1,5 @@
 import sqlite3
 from get_file_path import *
-import main
 
 
 class DB :
@@ -96,35 +95,35 @@ class DB :
                                         "MODIFY_TIME, ACCESS_TIME, CREATE_TIME, MODIFY_ATTRIBUTE_TIME, BACKUP_TIME, INDEX_NUM, FILE_NODE_NUM, DATA_LOCATION, FOLDER, BOOKMARK)" \
                                         " VALUES (:name, :path, :size, :md5, :sha1, :modify_time, :access_time, :create_time, :modify_attribute_time, :backup_time, :index_num, :file_node_num, :data_location, :folder, :bookmark)"
 
-            main.printDebugMessage("sql : " + self.sql)
+            dbgmsg("sql : " + self.sql)
             self.cur.execute(self.sql, item_dict)
 
         #folder
         if opcode == "FOLDER" :
             self.sql = "INSERT INTO FOLDER (NUM, NAME, PATH, UPPER_NUM, PARSED) VALUES (:num, :name, :path, :upper_num, :parsed)"
-            main.printDebugMessage("sql : " + self.sql)
+            dbgmsg("sql : " + self.sql)
             self.cur.execute(self.sql, item_dict)
 
         if opcode == "FOLDER_PARSED" :
             self.sql = "UPDATE FOLDER SET PARSED = 1 WHERE NAME is :name AND PATH is :path"
-            main.printDebugMessage("sql : " + self.sql)
+            dbgmsg("sql : " + self.sql)
             self.cur.execute(self.sql, item_dict)
 
         if opcode == "SETUP" :
             self.sql = "INSERT INTO SETUP(NAME, CONTENTS) VALUES (:name, :contents)"
-            main.printDebugMessage("sql : " + self.sql)
+            dbgmsg("sql : " + self.sql)
             self.cur.execute(self.sql, item_dict)
 
         if opcode == "BOOKMARK" :
             self.sql = "INSERT INTO BOOKMARK(NUM, NAME) VALUES (:num, :name)"
-            main.printDebugMessage("sql : " + self.sql)
+            dbgmsg("sql : " + self.sql)
             self.cur.execute(self.sql, item_dict)
 
     def updateDB(self, opcode, item_dict):  # insertDB("EVIDENCE", 사전정보) 이런식
         # evidence
         if opcode == "BOOKMARK_ITEM":
             self.sql = "UPDATE evidences SET BOOKMARK = ':bookmark_num' WHERE NAME = ':name' AND PATH = ':path'"
-            main.printDebugMessage("sql : " + self.sql)
+            dbgmsg("sql : " + self.sql)
             self.cur.execute(self.sql, item_dict)
 
     def commit(self):
@@ -157,7 +156,7 @@ class DB :
         return self.row
     def executeOneQuery(self, sql): # dictionary 안붙을떄 SQL실행시켜주는 함수 executeOneQuery("SELECT * FROM asdf WHERE NAME IS ASDF")
         try :
-            main.printDebugMessage("sql : " + sql)
+            dbgmsg("sql : " + sql)
             self.sql = sql
             self.cur.execute(self.sql)
             self.conn.commit()
@@ -170,7 +169,7 @@ class DB :
 
     def executeOneQueryMany(self, sql) :
         try :
-            main.printDebugMessage("sql : " + sql)
+            dbgmsg("sql : " + sql)
             self.sql = sql
             self.cur.execute(self.sql)
             self.conn.commit()

@@ -3,7 +3,8 @@ import io
 import struct
 
 from Item import *
-import main
+import globals as gl
+from debug import *
 from nodes import *
 
 #need wmi, win32com module
@@ -47,7 +48,7 @@ class HFSP() :
             print("It is HFS+ FileSysem")
         self.block_size = struct.unpack_from(">I", fr, 0x0 + 0x28)[0]
         self.catalog_file = struct.unpack_from(">I", fr, 0x0 + 0x120)[0]
-        main.printDebugMessage("signature : " + str(self.signature) + " block_size : " + str(self.block_size) + " catalog_file : " + str(self.catalog_file))
+        dbgmsg("signature : " + str(self.signature) + " block_size : " + str(self.block_size) + " catalog_file : " + str(self.catalog_file))
         self.catalog_file_location = self.volume_start + self.block_size * self.catalog_file #카탈로그파일 위치 기록
         self.make_tree(f, UI)
 
@@ -60,7 +61,7 @@ class HFSP() :
         self.root_node = struct.unpack_from(">I", fr, 0x0 + 0x10)[0]
         self.first_leaf_node = struct.unpack_from(">I", fr, 0x0 + 0x18)[0]
         self.last_leaf_node = struct.unpack_from(">I", fr, 0x0 + 0x1C)[0]
-        main.printDebugMessage("ns : " + str(self.node_size) + " rn : " + str(self.root_node) + " fl : " + str(self.first_leaf_node))
+        dbgmsg("ns : " + str(self.node_size) + " rn : " + str(self.root_node) + " fl : " + str(self.first_leaf_node))
         #self.parse_root_node(f)
 
         leaf_node_count_max = self.first_leaf_node - self.last_leaf_node #UI ProgressBar
@@ -70,10 +71,10 @@ class HFSP() :
             flink = self.parse_leaf_node(f, flink)
             UI.progressBar.setProperty("value", str(int((leaf_node_count / leaf_node_count_max) * 100)))
             leaf_node_count += 1
-        main.db1.commit()
-        main.printDebugMessage("dicts > ")
+        gl.db.commit()
+        dbgmsg("dicts > ")
         for a in self.dir_dict.keys() :
-            main.printDebugMessage("이름 : " + str(self.dir_dict[a].name) + " object_id : " + str(self.dir_dict[a].object_id) + " parent_node : "
+            dbgmsg("이름 : " + str(self.dir_dict[a].name) + " object_id : " + str(self.dir_dict[a].object_id) + " parent_node : "
                                    + str(self.dir_dict[a].parent_node) + "경로 : " + str(self.dir_dict[a].path))
             #for b in self.file_list :
                 #print(str(a) + "and " + str(b.parent_node))
@@ -93,22 +94,22 @@ class HFSP() :
             n = RootNode()
 
             key_length = struct.unpack_from(">H", fr, parse_location + 0x0)[0] + 4#레코드의 길이
-            main.printDebugMessage("key_length : " + str(key_length))
+            dbgmsg("key_length : " + str(key_length))
             name_length = struct.unpack_from(">H", fr, parse_location + 0x6)[0] #이름길이 파싱
 
             n.parent_node_id = struct.unpack_from(">I", fr, parse_location + 0x2)[0] #부모노드 id 파싱
             n.name = ""
             for i in range(name_length) :
                 n.name += chr(struct.unpack_from(">"+str(name_length)+"H", fr, parse_location + 0x8 + i * 2)[0]) #이름 파싱
-            main.printDebugMessage("n.name : " + n.name)
+            dbgmsg("n.name : " + n.name)
 
             n.child_node_id = struct.unpack_from(">I", fr, parse_location + 0x8 + name_length * 2)[0]
 
             parse_location += key_length #다음 레코드 파싱을 위해 현재 위치 기록해둠
 
             #self.node_list.append(n)
-            main.printDebugMessage("node added")
-        main.printDebugMessage("parse_rootnode_end")
+            dbgmsg("node added")
+        dbgmsg("parse_rootnode_end")
 
     def parse_leaf_node(self, f, node_num) : #node_num에 해당하는 node를 한번 파싱해줌
         """
@@ -116,19 +117,19 @@ class HFSP() :
         :rtype: int
         """
         f.seek(self.catalog_file_location + self.node_size * node_num, 0) #f pointer 해당 노드위치로 변경
-        main.printDebugMessage("location : " + str(self.catalog_file_location + self.node_size * node_num))
+        dbgmsg("location : " + str(self.catalog_file_location + self.node_size * node_num))
         fr = f.read(self.block_size * 2) #block size * 2만큼 읽어옴
         flink = struct.unpack_from(">I", fr, 0x0 + 0x0)[0]
         blink = struct.unpack_from(">I", fr, 0x0 + 0x4)[0]
         type = struct.unpack_from(">B", fr, 0x0 + 0x8)[0]
         height = struct.unpack_from(">B", fr, 0x0 + 0x9)[0]
         record_num = struct.unpack_from(">H", fr, 0x0 + 0xA)[0]
-        main.printDebugMessage("record_num : " + str(record_num) + " " + str(node_num))
+        dbgmsg("record_num : " + str(record_num) + " " + str(node_num))
         # 2 byte reserved
         for i in range(record_num):
             oi = ObjectItem() #파일 및 폴더
             record_location = struct.unpack_from(">H", fr, self.block_size*2  - (i + 1) * 2)[0]  # 2000 - (n + 1) * 2
-            main.printDebugMessage("i : " + str(i) + " record_location : " + str(record_location) + " block size : " + str(self.block_size))
+            dbgmsg("i : " + str(i) + " record_location : " + str(record_location) + " block size : " + str(self.block_size))
             oi.parent_node = struct.unpack_from(">I", fr, record_location + 0x2)[0]
             name_length = struct.unpack_from(">H", fr, record_location + 0x6)[0]  # 이름길이 파싱
             oi.name = "" #파일 및 폴더의 이름 구하기
@@ -157,7 +158,7 @@ class HFSP() :
             #        oi.block_count = struct.unpack_from(">I", fr, record_location + 0x8 + name_length * 2 + 0x56)[0]
                 #
 
-            main.printDebugMessage("n.name : " + oi.name + " parent_node : " + str(oi.parent_node) + " type : " + str(oi.type) + " name_length : " + str(name_length))
+            dbgmsg("n.name : " + oi.name + " parent_node : " + str(oi.parent_node) + " type : " + str(oi.type) + " name_length : " + str(name_length))
             if oi.type == 1 : #이 object가 폴더면
                 self.dir_dict[oi.object_id] = oi
                 object_id_temp = oi.parent_node #경로명을 알기위한 임시변수, 재귀형식을 갖기 위해 oi.parent_node로 설정
@@ -177,7 +178,7 @@ class HFSP() :
                 item_dict['path'] = oi.path
                 item_dict['upper_num'] = oi.parent_node  # db 업데이트를 위한 사전
                 item_dict['parsed'] = 1
-                main.db1.insertDB("FOLDER", item_dict)  # db에 저장
+                gl.db.insertDB("FOLDER", item_dict)  # db에 저장
             else : #이 object가 파일이면
                 #데이터 먼저 추출
                 oi.size = struct.unpack_from(">Q", fr, record_location + 0x8 + name_length * 2 + 0x50)[0]
@@ -197,20 +198,20 @@ class HFSP() :
                 oi.path_parsed = 1
 
                 file_inform = {}
-                main.printDebugMessage("parsing NAME")
+                dbgmsg("parsing NAME")
                 file_inform['name'] = oi.name  # 파일이름 파싱
-                main.printDebugMessage("parsing PATH")
+                dbgmsg("parsing PATH")
                 file_inform['path'] = oi.path  # 파일 path 파싱
-                main.printDebugMessage("parsing SIZE")
+                dbgmsg("parsing SIZE")
                 file_inform['size'] = 0
                 # file_inform['size'] = 0
-                main.printDebugMessage("parsing MD5")
+                dbgmsg("parsing MD5")
                 #file_inform['md5'] = file_hash.md5_for_largefile(path + "\\" + file_inform['name'], 4096)
                 file_inform['md5'] = 0  # 일딴뺐음
-                main.printDebugMessage("parsing SHA1")
+                dbgmsg("parsing SHA1")
                 #file_inform['sha1'] = file_hash.sha1_for_largefile(path + "\\" + file_inform['name'], 4096)
                 file_inform['sha1'] = 0  # 속도떄문에 일딴뺐음
-                main.printDebugMessage("parsing MAC")
+                dbgmsg("parsing MAC")
                 file_inform['modify_time'] = oi.modify_time
                 file_inform['access_time'] = oi.access_time
                 file_inform['create_time'] = oi.create_time
@@ -224,8 +225,8 @@ class HFSP() :
                 file_inform['bookmark'] = 0
 
                 # item_tuple = tuple(file_inform.values()) # db 업데이트를위한 튜플화
-                main.db1.insertDB("EVIDENCE", file_inform)  # db에 저장
-            main.printDebugMessage("node added")
+                gl.db.insertDB("EVIDENCE", file_inform)  # db에 저장
+            dbgmsg("node added")
         return flink
 
     def get_parent_name(self, folder_id):
@@ -243,7 +244,7 @@ class HFSP() :
         start_location = location % self.block_size
         extent_discriptor_list = []
         total_block = struct.unpack_from(">I", fr, start_location + 0xC)[0]
-        main.printDebugMessage("carving total_block : " + str(total_block))
+        dbgmsg("carving total_block : " + str(total_block))
         i_block = 0 #carving하고있는 block의 위치
         i_count = 0 #block위치를 센 횟수
         while i_block < total_block :
@@ -254,7 +255,7 @@ class HFSP() :
 
             i_block += ed.block_count
             extent_discriptor_list.append(ed)
-            main.printDebugMessage("block : " + str(i_block) + " start_block : " + str(ed.start_block) + " block_count : " + str(ed.block_count))
+            dbgmsg("block : " + str(i_block) + " start_block : " + str(ed.start_block) + " block_count : " + str(ed.block_count))
 
         for i in extent_discriptor_list :
             f.seek((self.volume_start + i.start_block * self.block_size), 0)
