@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="UI_resource_Delete_Bookmark">
+    <file>audio-and-sound-alerts-on.png</file>
+  </qresource>
+</RCC>
