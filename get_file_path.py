@@ -58,7 +58,7 @@ def get_file_path(default_path, db1):  # get file pathes and return pathes
                                  , file_inform['index_num'], folder_num)  # 새로운 Item객체 만듬, 정보대입
                 main.itemList.append(item)  # itemList에 item객체를 넣는다"""
                 # item_tuple = tuple(file_inform.values()) # db 업데이트를위한 튜플화
-                db1.updateDB("EVIDENCE", file_inform)  # db에 저장
+                db1.insertDB("EVIDENCE", file_inform)  # db에 저장
         for dirs in dirnames:  # 한 폴더의 파일 쭉긁어오기
             # main.printDebugMessage("폴더 탐지")
             folder_num += 1;  # 폴더 인덱싱
@@ -72,7 +72,7 @@ def get_file_path(default_path, db1):  # get file pathes and return pathes
             item_dict['name'] = os.path.basename(dirs)
             item_dict['path'] = dirpath
             item_dict['upper_num'] = upper_folder_num  # db 업데이트를 위한 사전
-            db1.updateDB("FOLDER", item_dict)  # db에 저장
+            db1.insertDB("FOLDER", item_dict)  # db에 저장
 
 
 def get_one_file_path(path, db1):  # get file pathes and return pathes
@@ -96,28 +96,27 @@ def get_one_file_path(path, db1):  # get file pathes and return pathes
                 item_dict['path'] = path
                 item_dict['upper_num'] = upper_folder_num  # db 업데이트를 위한 사전
                 item_dict['parsed'] = 0
-                db1.updateDB("FOLDER", item_dict)  # db에 저장
+                db1.insertDB("FOLDER", item_dict)  # db에 저장
                 # except:
                 #    print("폴더를 찾을 수 없습니다zzz")
 
-            else:  # 폴더라면
+            else:  # 파일이라면
                 main.printDebugMessage("파일 탐지 : " + os.path.basename(one_item))
                 file_inform = {}
-                file_stat = os.stat(path + "\\" + one_item)
+                file_stat = os.stat(path + "\\" + os.path.basename(one_item))
                 main.printDebugMessage("parsing NAME")
                 file_inform['name'] = os.path.basename(one_item)  # 파일이름 파싱
                 main.printDebugMessage("parsing PATH")
-                file_inform['path'] = os.path.dirname(one_item)  # 파일 path 파싱
+                file_inform['path'] = path  # 파일 path 파싱
                 main.printDebugMessage("parsing SIZE")
-                # file_inform['size'] = file_stat.st_size
-                file_inform['size'] = 0
-                # file_inform['size'] = 0
+                file_inform['size'] = file_stat.st_size
+                #file_inform['size'] = 0
                 main.printDebugMessage("parsing MD5")
-                # file_inform['md5'] = file_hash.md5_for_largefile(os.path.abspath(one_item), 4096)
-                file_inform['md5'] = 0  # 속도떄문에 일딴뺐음
+                file_inform['md5'] = file_hash.md5_for_largefile(path + "\\" + file_inform['name'], 4096)
+                #file_inform['md5'] = 0  # 속도떄문에 일딴뺐음
                 main.printDebugMessage("parsing SHA1")
-                # file_inform['sha1'] = file_hash.sha1_for_largefile(os.path.abspath(one_item), 4096)
-                file_inform['sha1'] = 0  # 속도떄문에 일딴뺐음
+                file_inform['sha1'] = file_hash.sha1_for_largefile(path  + "\\" + file_inform['name'], 4096)
+                #file_inform['sha1'] = 0  # 속도떄문에 일딴뺐음
                 main.printDebugMessage("parsing MAC")
                 file_inform['modify_time'] = datetime.datetime.fromtimestamp(file_stat.st_mtime)
                 file_inform['access_time'] = datetime.datetime.fromtimestamp(file_stat.st_atime)
@@ -133,17 +132,13 @@ def get_one_file_path(path, db1):  # get file pathes and return pathes
                                  , file_inform['index_num'], folder_num)  # 새로운 Item객체 만듬, 정보대입
                 main.itemList.append(item)  # itemList에 item객체를 넣는다"""
                 # item_tuple = tuple(file_inform.values()) # db 업데이트를위한 튜플화
-                db1.updateDB("EVIDENCE", file_inform)  # db에 저장
+                db1.insertDB("EVIDENCE", file_inform)  # db에 저장
 
 
         item_dict = {}
         item_dict['name'] = os.path.basename(path)
         item_dict['path'] = os.path.dirname(path)
-        db1.updateDB("FOLDER_PARSED", item_dict)
+        db1.insertDB("FOLDER_PARSED", item_dict)
     except :
         print("폴더를 찾을 수 없습니다,")
-
-def addRootFolderNum(path, num) : #최상위 폴더 folder_num_dict에 넣는함수
-    global folder_num_dict
-    folder_num_dict[path] = num
 

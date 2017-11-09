@@ -1,14 +1,21 @@
+from __future__ import unicode_literals
 import os
+
+
+from PyQt5 import QtWidgets
+from PyQt5 import uic
 
 from file_hash import *
 from file_info import *
 import Item
-from dbManager import *
 from get_file_path import *
 from explorer import *
+from hfs import *
+from dbManager import *
 itemList = [] #Item.py랑 같이쓰던건데 사용목적희미해짐
 default_path = "" # explorer에서 최상위폴더 경로
 debug_mode = False #디버그
+
 def printDebugMessage(message) : #디버그메세지
     if debug_mode == True :
         print(message)
@@ -17,14 +24,21 @@ def printItemList() : #Item.py랑 같이쓰던건데 사용목적희미해짐
     for i in itemList :
         print(i.showInfo())
 
-def makeCSV(itemList) : #CSV떨구기
+def makeCSV() : #CSV떨구기
     f = open("list.csv", 'w')
+    double_hash_md5 = ""
+    double_hash_sha1 = ""
     f.write("\"이름\" \"경로\"  \"크기\"  \"MD5\" \"SHA-1\"   \"마지막 수정시간\"   \"마지막 접근시간\"   \"생성시간\"   \"색인\"\n")
-    for i in itemList :
-        f.write("\""+i.name + "\" \"" + i.path + "\" \"" + str(i.size)
-                + "\" \"" + str(i.md5) + "\" \"" + str(i.sha1) + "\" \"" + str(i.modify_time)
-                + "\" \"" + str(i.access_time)  + "\" \"" + str(i.create_time)
-                + "\" \"" + str(i.index) + "\"\n")
+    row_evidences = db1.executeOneQueryMany("SELECT * FROM EVIDENCES")
+    for i in row_evidences :
+        double_hash_md5 += i[3]
+        double_hash_sha1 += i[4]
+        f.write("\""+i[0] + "\" \"" + i[1] + "\" \"" + str(i[2])
+                + "\" \"" + i[3] + "\" \"" + i[4] + "\" \"" + str(i[5])
+                + "\" \"" + str(i[6])  + "\" \"" + str(i[7])
+                + "\" \"" + str(i[8]) + "\"\n")
+    f.write("\ndouble_hash_sha1 : " + sha1_for_string(double_hash_sha1))
+    f.write("\ndouble_hash_md5 : " + sha1_for_string(double_hash_md5))
     print("make CSV")
     f.close()
     f = open("list_csv_hash.txt", 'w') # CSV에 대한 hash값을 담은 list_csv_hast.txt파일을 생성
@@ -41,20 +55,20 @@ def makeDD(path) : #DD떨구기 1도모름
 
 def readDisk():
     global default_path
-    print("Please input path > ") # 최상위폴더 입력받기
+    print("Please input path > ", end = "") # 최상위폴더 입력받기
     default_path = input() #입력받음
 
     item_dict = {}
     item_dict['name'] = "DEFAULT_PATH"
     item_dict['contents'] = default_path
-    db1.updateDB("SETUP", item_dict) # 최상위폴더경로 (default_path) db에 저장
+    db1.insertDB("SETUP", item_dict) # 최상위폴더경로 (default_path) db에 저장
     item_dict.clear()
     item_dict['num'] = 0
     item_dict['name'] = os.path.basename(default_path)
     item_dict['path'] = os.path.dirname(default_path)[:-1] if os.path.dirname(default_path)[-1] == "\\" else os.path.dirname(default_path)# 경로끝에 \ 붙을 시 \ 떼줌
     item_dict['upper_num'] = -1
     item_dict['parsed'] = 1
-    db1.updateDB("FOLDER", item_dict) # 최상위폴더정보저장
+    db1.insertDB("FOLDER", item_dict) # 최상위폴더정보저장
     addRootFolderNum(default_path, 0)
     addRootFolderNum(item_dict['path'], -1)
     #directory = os.listdir(default_path)
@@ -71,17 +85,28 @@ def readDisk():
                              , file_inform['access_time'], file_inform['create_time']
                              , file_inform['index'])  # 새로운 Item객체 만듬, 정보대입
             itemList.append(item)  # itemList에 item객체를 넣는다
-            #db1.updateDB("INSERT", file_inform)"""
+            #db1.insertDB("INSERT", file_inform)"""
 
 
-db1 = db(); #db 객체생성
+db1 = DB()
 db1.createTableIfNotExist() #db 테이블 없으면 만들기
 print("DB 연결완료")
 #readDisk()
-beginExplorer() #explorer 실행
+#system_warning()
+#hfsp = HPSP()
+#beginExplorer() #explorer 실행import sys
+item_dict = {}
+item_dict['bookmark_num'] = 1
+item_dict['name'] =".DS_Store"
+item_dict['path'] = "/무제/"
+print(item_dict)
+main.db1.updateDB("BOOKMARK_ITEM", item_dict)
+#QtWidgets.QDialog.__init__(None)
+#ui = uic.loadUi("MainWindow.ui")
+#ui.show()
 #printItemList()
 #makeCSV(itemList)
 #db1.printDB()
-db1.conn.close() #db연결종료
+#db1.conn.close() #db연결종료
 
 
