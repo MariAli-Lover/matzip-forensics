@@ -1,11 +1,10 @@
 import sys
-from PyQt5.QtWidgets import *
-from PyQt5 import uic
-from PyQt5.uic.uiparser import QtCore
-
+from PyQt5.QtWidgets import QApplication
+from PyQt5 import uic, QtCore
+from PyQt5.QtWidgets import QWizard
 from hfs import *
-
-form_class = uic.loadUiType("Initialize.ui")[0]
+import ctypes , os
+form_class = uic.loadUiType(".\\UI\Initialize.ui")[0]
 
 WIZARD_PAGE1 = 0
 WIZARD_PAGE2 = 1
@@ -18,7 +17,8 @@ class InitializeWindow(QWizard, form_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-
+    def setTabletTracking(self, a):
+        print("zz")
     def setNewCase_button(self, a):
         print(a)
 
@@ -40,9 +40,21 @@ class InitializeWindow(QWizard, form_class):
         return 1
 #    def parseHFS_event(self):
 
-
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
 
 if __name__ == "__main__":
+    if is_admin():
+        print("it's admin!")
+    else:
+        ASADMIN = "asadmin"
+        script = os.path.abspath(sys.argv[0])
+        params = " ".join([script] + sys.argv[1:] + [ASADMIN])
+        ctypes.windll.shell32.ShellExecuteW(None, u"runas", sys.executable, params, None, 0)
+
     app = QApplication(sys.argv)
     initWindow = InitializeWindow()
     initWindow.show()
