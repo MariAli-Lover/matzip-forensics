@@ -4,7 +4,6 @@ import globals as gl
 # from Item import *
 from debug import *
 
-
 # 폴더, 파일 쭉긁어오는거
 f = []
 folder_num = 0  # 폴더 인덱싱
@@ -58,7 +57,7 @@ def get_file_path(default_path, db1):  # get file pathes and return pathes
                                  , file_inform['sha1'], file_inform['modify_time']
                                  , file_inform['access_time'], file_inform['create_time']
                                  , file_inform['index_num'], folder_num)  # 새로운 Item객체 만듬, 정보대입
-                main.itemList.append(item)  # itemList에 item객체를 넣는다"""
+                gl.itemList.append(item)  # itemList에 item객체를 넣는다"""
                 # item_tuple = tuple(file_inform.values()) # db 업데이트를위한 튜플화
                 db1.insertDB("EVIDENCE", file_inform)  # db에 저장
         for dirs in dirnames:  # 한 폴더의 파일 쭉긁어오기
@@ -112,13 +111,13 @@ def get_one_file_path(path, db1):  # get file pathes and return pathes
                 file_inform['path'] = path  # 파일 path 파싱
                 dbgmsg("parsing SIZE")
                 file_inform['size'] = file_stat.st_size
-                #file_inform['size'] = 0
+                # file_inform['size'] = 0
                 dbgmsg("parsing MD5")
                 file_inform['md5'] = file_hash.md5_for_largefile(path + "\\" + file_inform['name'], 4096)
-                #file_inform['md5'] = 0  # 속도떄문에 일딴뺐음
+                # file_inform['md5'] = 0  # 속도떄문에 일딴뺐음
                 dbgmsg("parsing SHA1")
-                file_inform['sha1'] = file_hash.sha1_for_largefile(path  + "\\" + file_inform['name'], 4096)
-                #file_inform['sha1'] = 0  # 속도떄문에 일딴뺐음
+                file_inform['sha1'] = file_hash.sha1_for_largefile(path + "\\" + file_inform['name'], 4096)
+                # file_inform['sha1'] = 0  # 속도떄문에 일딴뺐음
                 dbgmsg("parsing MAC")
                 file_inform['modify_time'] = datetime.datetime.fromtimestamp(file_stat.st_mtime)
                 file_inform['access_time'] = datetime.datetime.fromtimestamp(file_stat.st_atime)
@@ -136,11 +135,9 @@ def get_one_file_path(path, db1):  # get file pathes and return pathes
                 # item_tuple = tuple(file_inform.values()) # db 업데이트를위한 튜플화
                 db1.insertDB("EVIDENCE", file_inform)  # db에 저장
 
-
         item_dict = {}
         item_dict['name'] = os.path.basename(path)
         item_dict['path'] = os.path.dirname(path)
         db1.insertDB("FOLDER_PARSED", item_dict)
-    except :
+    except:
         print("폴더를 찾을 수 없습니다,")
-
