@@ -638,14 +638,6 @@
      <string>파일 수</string>
     </property>
    </column>
-   <item>
-    <property name="text">
-     <string>ㅇㅇ</string>
-    </property>
-    <property name="text">
-     <string>ㅇㅇ</string>
-    </property>
-   </item>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
@@ -806,6 +798,7 @@
  </widget>
  <resources>
   <include location="UI_resource_Add_to_Bookmark.qrc"/>
+  <include location="UI_resource.qrc"/>
  </resources>
  <connections>
   <connection>

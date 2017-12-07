@@ -1,4 +1,6 @@
 from __future__ import unicode_literals
+os_mode = "WINDOWS"
+
 import os
 
 
@@ -13,8 +15,23 @@ from explorer import *
 from hfs import *
 from dbManager import *
 itemList = [] #Item.py랑 같이쓰던건데 사용목적희미해짐
+homeplate_folder_list = []
 default_path = "" # explorer에서 최상위폴더 경로
 debug_mode = False #디버그
+disk_num = 0
+block_size = 0
+mainWindow = 0
+logicalImaging_output_path = ""
+tabWidget_2_bookmark_dict = {} #ls 북마크시 열려져있는 창 체크용 / 구조 : key = 북마크넘버  value = tabWidget 인덱스
+status_path = "" # 아래 status에 나오는 path
+root_folder_path = ""
+
+button_folder_num_list = [] #뒤로가기, 앞으로가기
+button_folder_num_list_location = -1
+current_folder_num = 0
+previous_folder_num = 0
+next_folder_num = 0
+upper_folder_num = 0
 
 def printDebugMessage(message) : #디버그메세지
     if debug_mode == True :
@@ -87,20 +104,25 @@ def readDisk():
             itemList.append(item)  # itemList에 item객체를 넣는다
             #db1.insertDB("INSERT", file_inform)"""
 
+def regexp(expr, item):
+    reg = re.compile(expr)
+    return reg.search(item) is not None
+
 
 db1 = DB()
 db1.createTableIfNotExist() #db 테이블 없으면 만들기
+db1.conn.create_function("REGEXP", 2, regexp)
 print("DB 연결완료")
 #readDisk()
 #system_warning()
 #hfsp = HPSP()
 #beginExplorer() #explorer 실행import sys
 item_dict = {}
-item_dict['bookmark_num'] = 1
-item_dict['name'] =".DS_Store"
-item_dict['path'] = "/무제/"
-print(item_dict)
-main.db1.updateDB("BOOKMARK_ITEM", item_dict)
+
+#hfs = HFSP(2)
+#hfs.parsingData(3323810600, "asdf")
+#main.db1.updateDB_setup("BOOKMARK_NUM", "2")
+#main.db1.commit()
 #QtWidgets.QDialog.__init__(None)
 #ui = uic.loadUi("MainWindow.ui")
 #ui.show()

@@ -1,10 +1,9 @@
-﻿from cx_Freeze import setup,Executable
-
+# -*- coding: utf-8 -*-
+from distutils.core import setup
+import py2exe
 setup(
-    name = "test",
-	version="0.1",
-	description="test",
-	executables=[Executable("file_info.py")],
-	options = {
-	}
+    options = {"py2exe": {"packages": ["encodings"],
+                          "bundle_files": 1}},
+    zipfile = None,
+    windows = ["InitializeWindow.py"],
 )

@@ -1,4 +1,5 @@
 class ObjectItem:
+    global key_length
     global parent_node
     global name
     # global flag                 #
@@ -18,6 +19,8 @@ class ObjectItem:
 
     global path #경로
     global path_parsed
+
+    global keyfile_type #
     # global reserved            #4byte
     ##############file###################
 
