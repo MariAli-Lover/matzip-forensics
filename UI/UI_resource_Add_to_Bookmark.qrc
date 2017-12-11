@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="UI_resource_Add_to_Bookmark">
+    <file>bookmarks-bookmark@32px.png</file>
+    <file>documents-document-add.png</file>
+    <file>controls-editor-trash.png</file>
+  </qresource>
+</RCC>

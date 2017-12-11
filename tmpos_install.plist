@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>date</key>
+		<date>2017-10-12T05:05:53Z</date>
+		<key>displayName</key>
+		<string>OS X</string>
+		<key>displayVersion</key>
+		<string>10.9.5 (13F34)</string>
+		<key>packageIdentifiers</key>
+		<array>
+			<string>com.apple.pkg.BaseSystemBinaries</string>
+			<string>com.apple.pkg.BaseSystemResources</string>
+			<string>com.apple.pkg.Essentials</string>
+			<string>com.apple.pkg.BSD</string>
+			<string>com.apple.pkg.JavaTools</string>
+			<string>com.apple.pkg.AdditionalEssentials</string>
+			<string>com.apple.pkg.AdditionalSpeechVoices</string>
+			<string>com.apple.pkg.AsianLanguagesSupport</string>
+			<string>com.apple.pkg.MediaFiles</string>
+			<string>com.apple.pkg.JavaEssentials</string>
+			<string>com.apple.pkg.OxfordDictionaries</string>
+			<string>com.apple.pkg.X11redirect</string>
+			<string>com.apple.pkg.OSInstall</string>
+		</array>
+		<key>processName</key>
+		<string>OS X Installer</string>
+	</dict>
+	<dict>
+		<key>date</key>
+		<date>2017-10-12T06:15:15Z</date>
+		<key>displayName</key>
+		<string>TeamViewer</string>
+		<key>displayVersion</key>
+		<string>12.0.82953</string>
+		<key>packageIdentifiers</key>
+		<array>
+			<string>com.teamviewer.teamviewer12PriviledgedHelper</string>
+			<string>com.teamviewer.teamviewer12</string>
+			<string>com.teamviewer.teamviewer12Font</string>
+			<string>com.teamviewer.teamviewer12Agent</string>
+			<string>com.teamviewer.teamviewer12Restarter</string>
+			<string>com.teamviewer.teamviewer12AuthPlugin</string>
+		</array>
+		<key>processName</key>
+		<string>Installer</string>
+	</dict>
+	<dict>
+		<key>contentType</key>
+		<string>config-data</string>
+		<key>date</key>
+		<date>2017-10-12T13:11:38Z</date>
+		<key>displayName</key>
+		<string>CoreLSKD Configuration Data</string>
+		<key>displayVersion</key>
+		<string>8</string>
+		<key>packageIdentifiers</key>
+		<array>
+			<string>com.apple.pkg.CoreLSKDConfigData.8</string>
+		</array>
+		<key>processName</key>
+		<string>softwareupdated</string>
+	</dict>
+	<dict>
+		<key>contentType</key>
+		<string>config-data</string>
+		<key>date</key>
+		<date>2017-10-12T13:11:38Z</date>
+		<key>displayName</key>
+		<string>XProtectPlistConfigData</string>
+		<key>displayVersion</key>
+		<string>2095</string>
+		<key>packageIdentifiers</key>
+		<array>
+			<string>com.apple.pkg.XProtectPlistConfigData.16U4016</string>
+		</array>
+		<key>processName</key>
+		<string>softwareupdated</string>
+	</dict>
+	<dict>
+		<key>contentType</key>
+		<string>config-data</string>
+		<key>date</key>
+		<date>2017-10-12T13:11:38Z</date>
+		<key>displayName</key>
+		<string>Gatekeeper Configuration Data</string>
+		<key>displayVersion</key>
+		<string>131</string>
+		<key>packageIdentifiers</key>
+		<array>
+			<string>com.apple.pkg.GatekeeperConfigData.16U1265</string>
+		</array>
+		<key>processName</key>
+		<string>softwareupdated</string>
+	</dict>
+</array>
+</plist>

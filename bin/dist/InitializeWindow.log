@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "InitializeWindow.py", line 2, in <module>
+ImportError: No module named 'PyQt5'
+Traceback (most recent call last):
+  File "InitializeWindow.py", line 2, in <module>
+ImportError: No module named 'PyQt5'
